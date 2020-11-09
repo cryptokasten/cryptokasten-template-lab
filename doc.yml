@@ -1,0 +1,8 @@
+type: "lab"
+id: "test"
+title: "Test lab"
+description: "Test lab description"
+tags:
+  - cryptokasten
+#related:
+#  -

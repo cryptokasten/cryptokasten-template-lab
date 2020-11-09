@@ -1,0 +1,61 @@
+#+TITLE: Cryptokasten template: Lab
+#+TAGS: cryptokasten, cryptokasten-template
+#+OPTIONS: ^:nil
+
+[[https://github.com/cryptokasten][file:https://img.shields.io/badge/dynamic/json.svg?url=https://api.github.com/users/cryptokasten&label=Cryptokasten&query=$.public_repos]]
+[[https://github.com/cryptokasten-template][file:https://img.shields.io/badge/template-brightgreen.svg]]
+
+Template for cryptokasten Lab.
+
+** Meta data
+
+#+BEGIN_SRC yaml :tangle doc.yml
+type: "lab"
+id: "test"
+title: "Test lab"
+description: "Test lab description"
+tags:
+  - cryptokasten
+#related:
+#  - 
+#+END_SRC
+
+** Create directory
+
+#+NAME: created
+#+BEGIN_SRC python :results replace code :session *shell cryptokasten-template-lab:python*
+import yaml
+import os
+doc = yaml.load(open("doc.yml", "rt"))
+cryptokasten_dir = os.environ.get("CRYPTOKASTEN", "~/data/cryptokasten")
+repo_dir = os.path.join(cryptokasten_dir, "Lab", doc["id"])
+env = open(".env", "wt")
+env.write('export REPO="%s"' % os.path.expanduser(repo_dir))
+env.close()
+'(find-file "%s")' % repo_dir
+#+END_SRC
+
+** Create repo
+
+CHECK REPO NAME!
+
+#+BEGIN_SRC sh :session *shell cryptokasten-template-lab:shell*
+. .env
+export GIT_DIR="$REPO/.git"
+export GIT_WORK_TREE="$REPO"
+git init $REPO
+cp ./doc.yml $REPO/meta.yml
+docker run --rm \
+  -v "`pwd`/doc.yml:/data/doc.json" \
+  -v "`pwd`/template:/data/template" \
+  -v "$REPO:/data/output" \
+  cryptokasten/cryptokasten-create-from-template
+#+END_SRC
+
+** Open
+
+#+RESULTS: created
+#+BEGIN_SRC python
+(find-file "~/data/cryptokasten/Lab/test")
+#+END_SRC
+
